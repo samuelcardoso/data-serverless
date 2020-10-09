@@ -8,7 +8,7 @@ import { Kinesis } from "aws-sdk";
 import { v4 as uuidv4 } from "uuid";
 import * as tf from "@tensorflow/tfjs";
 import wine_quality from "./externals/data/wine_quality.data";
-import { LayersModel } from "@tensorflow/tfjs-node";
+import { LayersModel } from "@tensorflow/tfjs";
 
 let model;
 

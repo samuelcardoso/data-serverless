@@ -79,8 +79,8 @@ functions:
           path: send
           method: POST
           cors: true
-      - schedule:
-          rate: rate(1 minute)
+      #- schedule:
+       #   rate: rate(1 minute)
   check:
     handler: src/handler.check
     events:
