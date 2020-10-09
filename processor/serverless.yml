@@ -2,13 +2,13 @@ plugins:
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-api-gateway-caching
-  # - serverless-prune-plugin
+  - serverless-prune-plugin
 
 service: beholder-node-boilerplate
 
 custom:
   stage: ${opt:stage, 'lab'}
-  secrets: ${file(./serverless.env.yml):${self:custom.stage}.secrets}
+  # secrets: ${file(./serverless.env.yml):${self:custom.stage}.secrets}
   prune:
     automatic: true
     number: 2
@@ -21,17 +21,18 @@ provider:
   stage: ${self:custom.stage}
   region: us-east-1
   timeout: 30
-  vpc: ${file(./serverless.env.yml):${self:custom.stage}.vpc}
+  # vpc: ${file(./serverless.env.yml):${self:custom.stage}.vpc}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "kms:Decrypt"
         - "rds:*"
+        - "kinesis:*"
       Resource: "*"
-  environment:
-    DB_HOST: ${self:custom.secrets.DB_HOST}
-    DB_USER: ${self:custom.secrets.DB_USER}
-    DB_PASS: ${self:custom.secrets.DB_PASS}
+  # environment:
+  #   DB_HOST: ${self:custom.secrets.DB_HOST}
+  #   DB_USER: ${self:custom.secrets.DB_USER}
+  #   DB_PASS: ${self:custom.secrets.DB_PASS}
 
 package:
   individually: false
@@ -64,11 +65,19 @@ package:
     - ./node_modules/typescript
 
 functions:
-  api:
-    handler: src/handler.api
+  listener:
+    handler: src/handler.listener
+    events:
+      - stream:
+          type: kinesis
+          arn: arn:aws:kinesis:us-east-1:972145800023:stream/myapp_stream
+          consumer: true
+  send:
+    handler: src/handler.send
     events:
       - http:
-          path: api
-          method: get
+          path: send
+          method: POST
           cors: true
-
+      - schedule:
+          rate: rate(1 minute)
