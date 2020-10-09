@@ -81,3 +81,10 @@ functions:
           cors: true
       - schedule:
           rate: rate(1 minute)
+  check:
+    handler: src/handler.check
+    events:
+      - http:
+          path: check
+          method: POST
+          cors: true
