@@ -8,7 +8,6 @@ service: beholder-node-boilerplate
 
 custom:
   stage: ${opt:stage, 'lab'}
-  # secrets: ${file(./serverless.env.yml):${self:custom.stage}.secrets}
   prune:
     automatic: true
     number: 2
@@ -21,7 +20,6 @@ provider:
   stage: ${self:custom.stage}
   region: us-east-1
   timeout: 30
-  # vpc: ${file(./serverless.env.yml):${self:custom.stage}.vpc}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -29,10 +27,6 @@ provider:
         - "rds:*"
         - "kinesis:*"
       Resource: "*"
-  # environment:
-  #   DB_HOST: ${self:custom.secrets.DB_HOST}
-  #   DB_USER: ${self:custom.secrets.DB_USER}
-  #   DB_PASS: ${self:custom.secrets.DB_PASS}
 
 package:
   individually: false
@@ -41,7 +35,6 @@ package:
     - ./.hooks/**
     - ./.serverless/**
     - ./.vscode/**
-    - ./resources/**
     - ./src/**
     - ./.eslintrc.js
     - ./.gitignore
@@ -79,8 +72,8 @@ functions:
           path: send
           method: POST
           cors: true
-      #- schedule:
-       #   rate: rate(1 minute)
+      - schedule:
+         rate: rate(1 minute)
   check:
     handler: src/handler.check
     events:
