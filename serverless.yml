@@ -23,8 +23,6 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "kms:Decrypt"
-        - "rds:*"
         - "kinesis:*"
       Resource: "*"
 
